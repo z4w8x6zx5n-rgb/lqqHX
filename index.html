@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>刘启全化学冲刺网页</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="topbar">
+      <button class="home-btn" type="button" data-home>🏠 返回首页</button>
+      <div class="brand">刘启全化学冲刺网页</div>
+    </div>
+    <section class="hero">
+      <p class="eyebrow">⚗️ 高中化学 · 高考冲刺</p>
+      <h1>把零散知识点，整理成能拿分的路线图</h1>
+      <p class="hero-text">每天啃下一小块，反应方程式、题型思路、易错提醒都会慢慢变成你的底气。刘启全，加油，化学可以被你拿下！🔥</p>
+      <div class="hero-actions">
+        <a href="#topics" class="primary-link">开始复习</a>
+        <span class="pill">14 个核心专题</span>
+        <span class="pill">基础卷 + 加强卷</span>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section id="home-view" class="view active">
+      <div class="section-head" id="topics">
+        <div>
+          <p class="eyebrow">📚 知识点列表</p>
+          <h2>高中化学全部核心专题</h2>
+        </div>
+        <label class="search-box">
+          <span>🔎</span>
+          <input id="searchInput" type="search" placeholder="搜索：氧化还原、电化学、有机...">
+        </label>
+      </div>
+      <div id="topicGrid" class="topic-grid"></div>
+    </section>
+
+    <section id="detail-view" class="view">
+      <button class="back-row" type="button" data-home>← 返回首页</button>
+      <article id="topicDetail" class="detail"></article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>✨ 稳住心态，先会再快，先准再强。每一次订正，都是下一次多拿分的伏笔。</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
