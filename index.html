@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="刘启全高中化学冲刺复习网页，覆盖知识点解读、题型、易错点、基础版试卷和加强版试卷。">
   <title>刘启全化学冲刺网页</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -20,6 +21,7 @@
         <a href="#topics" class="primary-link">开始复习</a>
         <span class="pill">14 个核心专题</span>
         <span class="pill">基础卷 + 加强卷</span>
+        <span class="pill">适配手机复习</span>
       </div>
     </section>
   </header>
@@ -30,12 +32,19 @@
         <div>
           <p class="eyebrow">📚 知识点列表</p>
           <h2>高中化学全部核心专题</h2>
+          <p class="section-note">按 5·3 复习资料章节整理，先建立完整框架，再逐章补强细节。</p>
         </div>
         <label class="search-box">
           <span>🔎</span>
           <input id="searchInput" type="search" placeholder="搜索：氧化还原、电化学、有机...">
         </label>
       </div>
+      <div class="stats" aria-label="复习概览">
+        <div><strong id="topicCount">14</strong><span>核心专题</span></div>
+        <div><strong>4</strong><span>模块训练</span></div>
+        <div><strong>2</strong><span>试卷层级</span></div>
+      </div>
+      <p id="resultInfo" class="result-info"></p>
       <div id="topicGrid" class="topic-grid"></div>
     </section>
 
@@ -47,6 +56,7 @@
 
   <footer class="footer">
     <p>✨ 稳住心态，先会再快，先准再强。每一次订正，都是下一次多拿分的伏笔。</p>
+    <p class="source-note">资料框架参考本地 2026 版湖南选考总复习化学 5·3A / 5·3B 文件夹，后续可继续补入原题和精讲摘录。</p>
   </footer>
 
   <script src="script.js"></script>

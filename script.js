@@ -188,6 +188,8 @@ const detailView = document.querySelector("#detail-view");
 const topicGrid = document.querySelector("#topicGrid");
 const topicDetail = document.querySelector("#topicDetail");
 const searchInput = document.querySelector("#searchInput");
+const topicCount = document.querySelector("#topicCount");
+const resultInfo = document.querySelector("#resultInfo");
 
 function listItems(items) {
   return `<ul class="list">${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
@@ -219,6 +221,22 @@ function makeAdvancedPaper(topic) {
 }
 
 function renderCards(items = topics) {
+  topicCount.textContent = topics.length;
+  resultInfo.textContent = items.length === topics.length
+    ? `今天从 ${topics.length} 个专题里挑一个开始，先稳住基础分。`
+    : `找到 ${items.length} 个相关专题。`;
+
+  if (items.length === 0) {
+    topicGrid.innerHTML = `
+      <div class="topic-card" role="status">
+        <span class="icon">🔎</span>
+        <h3>没有匹配结果</h3>
+        <p>换个关键词试试，比如“平衡”“实验”“金属”“有机”。别急，方向对了就快了。</p>
+      </div>
+    `;
+    return;
+  }
+
   topicGrid.innerHTML = items.map((topic, index) => `
     <button class="topic-card" type="button" data-id="${topic.id}">
       <span class="icon">${topic.icon}</span>
@@ -278,6 +296,7 @@ function renderDetail(topic) {
 }
 
 function showHome() {
+  document.title = "刘启全化学冲刺网页";
   homeView.classList.add("active");
   detailView.classList.remove("active");
   location.hash = "";
@@ -287,6 +306,7 @@ function showHome() {
 function showTopic(id) {
   const topic = topics.find(item => item.id === id) || topics[0];
   renderDetail(topic);
+  document.title = `${topic.title} - 刘启全化学冲刺网页`;
   homeView.classList.remove("active");
   detailView.classList.add("active");
   location.hash = topic.id;
