@@ -495,17 +495,18 @@ main {
   margin-top: 14px;
 }
 
-.paper-topic-list a {
+.paper-topic-list button {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 10px;
   color: var(--ink);
-  text-decoration: none;
   background: #fbfcfe;
+  text-align: left;
+  cursor: pointer;
 }
 
-.paper-topic-list a.active,
-.paper-topic-list a:hover {
+.paper-topic-list button.active,
+.paper-topic-list button:hover {
   border-color: var(--blue);
   color: var(--blue);
   background: #eef6ff;

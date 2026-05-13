@@ -9,9 +9,9 @@
 </head>
 <body>
   <header class="site-header">
-      <div class="topbar">
+    <div class="topbar">
       <button class="home-btn" type="button" data-home>🏠 返回首页</button>
-      <a class="nav-link" href="papers.html">📄 试卷总页</a>
+      <button class="nav-link" type="button" data-paper-home>📄 试卷练习</button>
       <div class="brand">刘启全化学冲刺网页</div>
     </div>
     <section class="hero">
@@ -52,6 +52,18 @@
     <section id="detail-view" class="view">
       <button class="back-row" type="button" data-home>← 返回首页</button>
       <article id="topicDetail" class="detail"></article>
+    </section>
+
+    <section id="paper-view" class="view">
+      <button class="back-row" type="button" data-home>← 返回首页</button>
+      <div class="paper-layout">
+        <aside class="paper-sidebar">
+          <h2>专题试卷</h2>
+          <p class="section-note">答案默认隐藏，做完再展开订正。</p>
+          <div id="paperTopicList" class="paper-topic-list"></div>
+        </aside>
+        <article id="paperPage" class="detail"></article>
+      </div>
     </section>
   </main>
 

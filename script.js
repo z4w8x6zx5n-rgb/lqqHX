@@ -185,6 +185,7 @@ const topics = [
 
 const homeView = document.querySelector("#home-view");
 const detailView = document.querySelector("#detail-view");
+const paperView = document.querySelector("#paper-view");
 const topicGrid = document.querySelector("#topicGrid");
 const topicDetail = document.querySelector("#topicDetail");
 const searchInput = document.querySelector("#searchInput");
@@ -278,7 +279,7 @@ function renderDetail(topic) {
       <h2>${topic.title}</h2>
       <p>${topic.desc} 本页按教师精讲 PDF 的章节体系整理，先看图建立框架，再回到公式、方程式和题型。你已经在路上了，继续稳住！💪</p>
       <div class="tag-row">${topic.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
-      <a class="paper-link" href="papers.html?topic=${topic.id}">📄 去独立试卷页练这一章</a>
+      <button class="paper-link" type="button" data-paper-topic="${topic.id}">📄 练这一章试卷</button>
     </section>
 
     ${visualMap(topic)}
@@ -305,8 +306,8 @@ function renderDetail(topic) {
 
     <section class="content-block">
       <h3>4. 试卷测试 📄</h3>
-      <p>试卷已移到独立页面，做题时页面更清爽。基础版答案默认隐藏，点开后再订正；加强版用于综合训练。</p>
-      <a class="paper-link" href="papers.html?topic=${topic.id}">打开 ${topic.title} 试卷</a>
+      <p>试卷在本网页内部切换显示，不需要打开第二个网页。基础版答案默认隐藏，点开后再订正；加强版用于综合训练。</p>
+      <button class="paper-link" type="button" data-paper-topic="${topic.id}">打开 ${topic.title} 试卷</button>
     </section>
   `;
 }
@@ -315,17 +316,16 @@ function renderPaperTopicList(activeId) {
   const list = document.querySelector("#paperTopicList");
   if (!list) return;
   list.innerHTML = topics.map(topic => `
-    <a class="${topic.id === activeId ? "active" : ""}" href="papers.html?topic=${topic.id}">
+    <button class="${topic.id === activeId ? "active" : ""}" type="button" data-paper-topic="${topic.id}">
       ${topic.icon} ${topic.title}
-    </a>
+    </button>
   `).join("");
 }
 
-function renderPaperPage() {
+function renderPaperPage(id = topics[0].id) {
   const paperPage = document.querySelector("#paperPage");
   if (!paperPage) return;
-  const params = new URLSearchParams(location.search);
-  const topic = topics.find(item => item.id === params.get("topic")) || topics[0];
+  const topic = topics.find(item => item.id === id) || topics[0];
   const basicPaper = makeBasicPaper(topic);
   const advancedPaper = makeAdvancedPaper(topic);
   document.title = `${topic.title}试卷 - 刘启全化学冲刺网页`;
@@ -374,6 +374,7 @@ function showHome() {
   document.title = "刘启全化学冲刺网页";
   homeView.classList.add("active");
   detailView.classList.remove("active");
+  paperView.classList.remove("active");
   location.hash = "";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -384,7 +385,18 @@ function showTopic(id) {
   document.title = `${topic.title} - 刘启全化学冲刺网页`;
   homeView.classList.remove("active");
   detailView.classList.add("active");
+  paperView.classList.remove("active");
   location.hash = topic.id;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showPaper(id = topics[0].id) {
+  const topic = topics.find(item => item.id === id) || topics[0];
+  renderPaperPage(topic.id);
+  homeView.classList.remove("active");
+  detailView.classList.remove("active");
+  paperView.classList.add("active");
+  location.hash = `paper-${topic.id}`;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -399,6 +411,25 @@ document.querySelectorAll("[data-home]").forEach(button => {
   button.addEventListener("click", showHome);
 });
 
+document.querySelectorAll("[data-paper-home]").forEach(button => {
+  button.addEventListener("click", () => showPaper(topics[0].id));
+});
+
+if (topicDetail) {
+  topicDetail.addEventListener("click", event => {
+    const button = event.target.closest("[data-paper-topic]");
+    if (button) showPaper(button.dataset.paperTopic);
+  });
+}
+
+const paperTopicList = document.querySelector("#paperTopicList");
+if (paperTopicList) {
+  paperTopicList.addEventListener("click", event => {
+    const button = event.target.closest("[data-paper-topic]");
+    if (button) showPaper(button.dataset.paperTopic);
+  });
+}
+
 if (searchInput) {
   searchInput.addEventListener("input", event => {
     const keyword = event.target.value.trim().toLowerCase();
@@ -411,11 +442,12 @@ if (searchInput) {
 }
 
 renderCards();
-renderPaperPage();
 
 if (homeView && location.hash) {
   const hashId = location.hash.replace("#", "");
-  if (topics.some(topic => topic.id === hashId)) {
+  if (hashId.startsWith("paper-")) {
+    showPaper(hashId.replace("paper-", ""));
+  } else if (topics.some(topic => topic.id === hashId)) {
     showTopic(hashId);
   }
 }
