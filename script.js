@@ -220,7 +220,31 @@ function makeAdvancedPaper(topic) {
   ];
 }
 
+function visualMap(topic) {
+  return `
+    <section class="detail-visual">
+      <div class="visual-card">
+        <p class="eyebrow">🧭 反应路线图</p>
+        <h3>从概念到拿分的 3 步</h3>
+        <div class="reaction-map">
+          <div class="reaction-node"><span>1</span><div><strong>抓核心</strong><p>${topic.formulas[0]}</p></div></div>
+          <div class="arrow">↓</div>
+          <div class="reaction-node"><span>2</span><div><strong>套方程</strong><p>${topic.equations[0]}</p></div></div>
+          <div class="arrow">↓</div>
+          <div class="reaction-node"><span>3</span><div><strong>避易错</strong><p>${topic.pitfalls[0]}</p></div></div>
+        </div>
+      </div>
+      <div class="visual-card molecule-art" aria-label="化学分子视觉图">
+        <p class="eyebrow">🔬 图像记忆</p>
+        <h3>${topic.tags[0]} · ${topic.tags[1] || "核心考点"}</h3>
+        <p class="visual-caption">把知识点看成“粒子、键、能量、平衡、实验”之间的连接，做题时就不只是背结论，而是在找证据。</p>
+      </div>
+    </section>
+  `;
+}
+
 function renderCards(items = topics) {
+  if (!topicGrid) return;
   topicCount.textContent = topics.length;
   resultInfo.textContent = items.length === topics.length
     ? `今天从 ${topics.length} 个专题里挑一个开始，先稳住基础分。`
@@ -248,15 +272,16 @@ function renderCards(items = topics) {
 }
 
 function renderDetail(topic) {
-  const basicPaper = makeBasicPaper(topic);
-  const advancedPaper = makeAdvancedPaper(topic);
   topicDetail.innerHTML = `
     <section class="detail-hero">
       <p class="eyebrow">${topic.icon} 专题冲刺</p>
       <h2>${topic.title}</h2>
-      <p>${topic.desc} 今天把这一章打穿一点点，考场上就少慌一点点。你已经在路上了，继续稳住！💪</p>
+      <p>${topic.desc} 本页按教师精讲 PDF 的章节体系整理，先看图建立框架，再回到公式、方程式和题型。你已经在路上了，继续稳住！💪</p>
       <div class="tag-row">${topic.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
+      <a class="paper-link" href="papers.html?topic=${topic.id}">📄 去独立试卷页练这一章</a>
     </section>
+
+    ${visualMap(topic)}
 
     <section class="content-block">
       <h3>1. 知识点解读 🧠</h3>
@@ -280,16 +305,66 @@ function renderDetail(topic) {
 
     <section class="content-block">
       <h3>4. 试卷测试 📄</h3>
+      <p>试卷已移到独立页面，做题时页面更清爽。基础版答案默认隐藏，点开后再订正；加强版用于综合训练。</p>
+      <a class="paper-link" href="papers.html?topic=${topic.id}">打开 ${topic.title} 试卷</a>
+    </section>
+  `;
+}
+
+function renderPaperTopicList(activeId) {
+  const list = document.querySelector("#paperTopicList");
+  if (!list) return;
+  list.innerHTML = topics.map(topic => `
+    <a class="${topic.id === activeId ? "active" : ""}" href="papers.html?topic=${topic.id}">
+      ${topic.icon} ${topic.title}
+    </a>
+  `).join("");
+}
+
+function renderPaperPage() {
+  const paperPage = document.querySelector("#paperPage");
+  if (!paperPage) return;
+  const params = new URLSearchParams(location.search);
+  const topic = topics.find(item => item.id === params.get("topic")) || topics[0];
+  const basicPaper = makeBasicPaper(topic);
+  const advancedPaper = makeAdvancedPaper(topic);
+  document.title = `${topic.title}试卷 - 刘启全化学冲刺网页`;
+  renderPaperTopicList(topic.id);
+  paperPage.innerHTML = `
+    <section class="detail-hero">
+      <p class="eyebrow">${topic.icon} 试卷测试</p>
+      <h2>${topic.title}</h2>
+      <p>建议先限时完成基础版，再展开答案订正；加强版适合二刷和考前综合训练。稳住，先把能拿的分拿牢。✨</p>
+      <div class="tag-row">${topic.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
+    </section>
+
+    <section class="content-block">
+      <h3>基础版试卷（答案点击展开）</h3>
       <div class="paper">
-        <h3>基础版试卷（含详细解答）</h3>
-        ${basicPaper.map(item => `
+        ${basicPaper.map((item, index) => `
           <div class="question">
-            <strong>${item.q}</strong>
-            <div class="answer">详细解答：${item.a}</div>
+            <strong>${index + 1}. ${item.q}</strong>
+            <details class="answer-toggle">
+              <summary>查看详细解答</summary>
+              <div class="answer">详细解答：${item.a}</div>
+            </details>
           </div>
         `).join("")}
-        <h3>加强版试卷</h3>
-        ${advancedPaper.map(item => `<div class="question"><strong>${item}</strong><p>挑战提示：先列知识点，再写依据，最后规范表达。会做不丢分，才是真冲刺。</p></div>`).join("")}
+      </div>
+    </section>
+
+    <section class="content-block">
+      <h3>加强版试卷</h3>
+      <div class="paper">
+        ${advancedPaper.map((item, index) => `
+          <div class="question">
+            <strong>${index + 1}. ${item}</strong>
+            <details class="answer-toggle">
+              <summary>查看训练提示</summary>
+              <div class="answer">训练提示：先列知识点，再写依据，最后规范表达。把“会做”变成“写得准”，这一步很值。</div>
+            </details>
+          </div>
+        `).join("")}
       </div>
     </section>
   `;
@@ -313,26 +388,34 @@ function showTopic(id) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-topicGrid.addEventListener("click", event => {
-  const card = event.target.closest("[data-id]");
-  if (card) showTopic(card.dataset.id);
-});
+if (topicGrid) {
+  topicGrid.addEventListener("click", event => {
+    const card = event.target.closest("[data-id]");
+    if (card) showTopic(card.dataset.id);
+  });
+}
 
 document.querySelectorAll("[data-home]").forEach(button => {
   button.addEventListener("click", showHome);
 });
 
-searchInput.addEventListener("input", event => {
-  const keyword = event.target.value.trim().toLowerCase();
-  const result = topics.filter(topic => {
-    const text = `${topic.title} ${topic.desc} ${topic.tags.join(" ")} ${topic.formulas.join(" ")}`.toLowerCase();
-    return text.includes(keyword);
+if (searchInput) {
+  searchInput.addEventListener("input", event => {
+    const keyword = event.target.value.trim().toLowerCase();
+    const result = topics.filter(topic => {
+      const text = `${topic.title} ${topic.desc} ${topic.tags.join(" ")} ${topic.formulas.join(" ")}`.toLowerCase();
+      return text.includes(keyword);
+    });
+    renderCards(result);
   });
-  renderCards(result);
-});
+}
 
 renderCards();
+renderPaperPage();
 
-if (location.hash) {
-  showTopic(location.hash.replace("#", ""));
+if (homeView && location.hash) {
+  const hashId = location.hash.replace("#", "");
+  if (topics.some(topic => topic.id === hashId)) {
+    showTopic(hashId);
+  }
 }
